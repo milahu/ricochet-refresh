@@ -138,8 +138,10 @@ TRANSLATIONS += \
 
 # Only build translations when creating the primary makefile.
 {
-    contains(QMAKE_HOST.os,Windows):QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease.exe
-    else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+    isEmpty(QMAKE_LRELEASE) {
+        contains(QMAKE_HOST.os,Windows):QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease.exe
+        else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+    }
     for (translation, TRANSLATIONS) {
         system($$QMAKE_LRELEASE translation/$${translation}.ts -qm translation/$${translation}.qm)
     }
