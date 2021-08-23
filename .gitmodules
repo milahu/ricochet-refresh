@@ -4,3 +4,4 @@
 [submodule "src/extern/tor"]
 	path = src/extern/tor
 	url = https://git.torproject.org/tor.git
+	branch = tor-0.4.6.5
