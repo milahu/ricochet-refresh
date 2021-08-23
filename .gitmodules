@@ -3,5 +3,4 @@
 	url = https://github.com/fmtlib/fmt.git
 [submodule "src/extern/tor"]
 	path = src/extern/tor
-	url = https://git.torproject.org/tor.git
-	branch = tor-0.4.6.5
+	url = https://github.com/torproject/tor.git
