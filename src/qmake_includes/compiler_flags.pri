@@ -3,8 +3,7 @@ QMAKE_CXXFLAGS += --std=c++2a -Wall -Wextra
 
 # link time optimization for non-windows targets
 !win32-g++ {
-    QMAKE_CFLAGS += -flto
-    QMAKE_CXXFLAGS += -flto
+    CONFIG += ltcg
     CONFIG(debug,debug|release) {
         QMAKE_CFLAGS += -O1
         QMAKE_CXXFLAGS += -O1

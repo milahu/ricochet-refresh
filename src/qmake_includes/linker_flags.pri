@@ -9,5 +9,5 @@ win32-g++ {
     CONFIG(debug,debug|release) {
         QMAKE_LFLAGS += -Wl,-O1
     }
-    QMAKE_LFLAGS += -flto
+    CONFIG += ltcg
 }
