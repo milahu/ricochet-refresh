@@ -12,7 +12,10 @@ message Packet {
 }
 
 message OpenChannel {
-    required int32 channel_identifier = 1;      // Arbitrary unique identifier for this channel instance
+    // warning: conversion to ‘int32_t’ {aka ‘int’} from ‘uint32_t’ {aka ‘unsigned int’} may change the sign of the result [-Wsign-conversion]
+    // _impl_.channel_identifier_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+    //required int32 channel_identifier = 1;      // Arbitrary unique identifier for this channel instance
+    required uint32 channel_identifier = 1; // Arbitrary unique identifier for this channel instance OpenChannel.channel_identifier
     required string channel_type = 2;           // String identifying channel type; e.g. im.ricochet.chat
 
     // It is valid to extend the OpenChannel message to add fields specific
@@ -21,7 +24,8 @@ message OpenChannel {
 }
 
 message ChannelResult {
-    required int32 channel_identifier = 1;      // Matching the value from OpenChannel
+    //required int32 channel_identifier = 1;      // Matching the value from OpenChannel
+    required uint32 channel_identifier = 1;      // Matching the value from OpenChannel
     required bool opened = 2;                   // If the channel is now open
 
     enum CommonError {
