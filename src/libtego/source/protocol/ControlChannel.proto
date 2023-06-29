@@ -28,6 +28,9 @@ message ChannelResult {
     required uint32 channel_identifier = 1;      // Matching the value from OpenChannel
     required bool opened = 2;                   // If the channel is now open
 
+    // FIXME https://github.com/protocolbuffers/protobuf/issues/7224
+    // warning: conversion from ‘uint64_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+    // if (PROTOBUF_PREDICT_TRUE(::Protocol::Data::Control::ChannelResult_CommonError_IsValid(val))) {
     enum CommonError {
         GenericError = 0;
         UnknownTypeError = 1;

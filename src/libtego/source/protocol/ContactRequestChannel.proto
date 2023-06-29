@@ -24,6 +24,9 @@ message ContactRequest {
 
 // Response is the only valid message to send on the channel
 message Response {
+    // FIXME https://github.com/protocolbuffers/protobuf/issues/7224
+    // warning: conversion from ‘uint64_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+    // if (PROTOBUF_PREDICT_TRUE(::Protocol::Data::ContactRequest::Response_Status_IsValid(val))) {
     enum Status {
         Undefined = 0; // Not valid on the wire
         Pending = 1;

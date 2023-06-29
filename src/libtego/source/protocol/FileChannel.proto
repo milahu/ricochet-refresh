@@ -72,6 +72,9 @@ message FileChunkAck {
     optional uint64 bytes_received = 2;
 }
 
+// FIXME https://github.com/protocolbuffers/protobuf/issues/7224
+// warning: conversion from ‘uint64_t’ {aka ‘long unsigned int’} to ‘int’ may change value [-Wconversion]
+// if (PROTOBUF_PREDICT_TRUE(::Protocol::Data::File::FileTransferResult_IsValid(val))) {
 enum FileTransferResult {
     Success = 0;
     Failure = 1;
