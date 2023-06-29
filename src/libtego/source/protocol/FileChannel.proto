@@ -57,7 +57,10 @@ message FileHeaderAck {
 
 message FileHeaderResponse {
     optional uint32 file_id = 1;
-    optional int32 response = 2;
+    // warning: conversion to ‘int32_t’ {aka ‘int’} from ‘uint32_t’ {aka ‘unsigned int’} may change the sign of the result [-Wsign-conversion]
+    // _impl_.response_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+    //optional int32 response = 2;
+    optional uint32 response = 2;
 }
 
 message FileChunk {
