@@ -174,19 +174,36 @@ QByteArray torControlHashedPassword(const QByteArray &password)
 
     int count = (16u + (96 & 15)) << ((96 >> 4) + 6);
 
-    SHA_CTX hash;
-    SHA1_Init(&hash);
+    EVP_MD_CTX *mdctx;
+    mdctx = EVP_MD_CTX_new();
+    if (mdctx == NULL) {
+        throw std::runtime_error("Failed to create SHA1 context");
+    }
+
+    if (EVP_DigestInit_ex(mdctx, EVP_sha1(), NULL) != 1) {
+        throw std::runtime_error("Failed to init SHA1 context");
+    }
 
     QByteArray tmp = salt + password;
     while (count)
     {
         int c = qMin(count, tmp.size());
-        SHA1_Update(&hash, reinterpret_cast<const void*>(tmp.constData()), static_cast<size_t>(c));
+        if (EVP_DigestUpdate(mdctx, reinterpret_cast<const void*>(tmp.constData()), static_cast<size_t>(c)) != 1) {
+            throw std::runtime_error("Failed to update SHA1 digest");
+        }
         count -= c;
     }
 
     unsigned char md[20];
-    SHA1_Final(md, &hash);
+    unsigned int md_size = 0;
+    if (1 != EVP_DigestFinal_ex(mdctx, md, &md_size)) {
+        throw std::runtime_error("Failed to finalize SHA1 digest");
+    }
+    if (md_size != 20) {
+        throw std::runtime_error("Invalid SHA1 digest size");
+    }
+
+    EVP_MD_CTX_free(mdctx);
 
     /* 60 is the hex-encoded value of 96, which is a constant used by Tor's algorithm. */
     return QByteArray("16:") + salt.toHex().toUpper() + QByteArray("60") +
