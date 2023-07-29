@@ -176,13 +176,12 @@ QByteArray torControlHashedPassword(const QByteArray &password)
 
     // avoid leaking mdctx when throwing an exception
     unique_ptr<EVP_MD_CTX, decltype(EVP_MD_CTX_free)> mdctx_ptr(EVP_MD_CTX_new(), EVP_MD_CTX_free);
-    #define mdctx mdctx_ptr.get()
 
-    if (mdctx == NULL) {
+    if (mdctx_ptr.get() == NULL) {
         throw std::runtime_error("Failed to create SHA1 context");
     }
 
-    if (EVP_DigestInit_ex(mdctx, EVP_sha1(), NULL) != 1) {
+    if (EVP_DigestInit_ex(mdctx_ptr.get(), EVP_sha1(), NULL) != 1) {
         throw std::runtime_error("Failed to init SHA1 context");
     }
 
@@ -190,7 +189,7 @@ QByteArray torControlHashedPassword(const QByteArray &password)
     while (count)
     {
         int c = qMin(count, tmp.size());
-        if (EVP_DigestUpdate(mdctx, reinterpret_cast<const void*>(tmp.constData()), static_cast<size_t>(c)) != 1) {
+        if (EVP_DigestUpdate(mdctx_ptr.get(), reinterpret_cast<const void*>(tmp.constData()), static_cast<size_t>(c)) != 1) {
             throw std::runtime_error("Failed to update SHA1 digest");
         }
         count -= c;
@@ -198,14 +197,14 @@ QByteArray torControlHashedPassword(const QByteArray &password)
 
     unsigned char md[20];
     unsigned int md_size = 0;
-    if (1 != EVP_DigestFinal_ex(mdctx, md, &md_size)) {
+    if (1 != EVP_DigestFinal_ex(mdctx_ptr.get(), md, &md_size)) {
         throw std::runtime_error("Failed to finalize SHA1 digest");
     }
     if (md_size != 20) {
         throw std::runtime_error("Invalid SHA1 digest size");
     }
 
-    EVP_MD_CTX_free(mdctx);
+    EVP_MD_CTX_free(mdctx_ptr.get());
 
     /* 60 is the hex-encoded value of 96, which is a constant used by Tor's algorithm. */
     return QByteArray("16:") + salt.toHex().toUpper() + QByteArray("60") +
