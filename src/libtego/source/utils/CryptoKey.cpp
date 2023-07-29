@@ -174,10 +174,9 @@ QByteArray torControlHashedPassword(const QByteArray &password)
 
     int count = (16u + (96 & 15)) << ((96 >> 4) + 6);
 
-    // avoid leaking mdctx_hidden when throwing an exception
-    EVP_MD_CTX *mdctx_hidden = NULL;
-    mdctx_hidden = EVP_MD_CTX_new();
-    unique_ptr<EVP_MD_CTX, decltype(EVP_MD_CTX_free)> mdctx(mdctx_hidden, EVP_MD_CTX_free);
+    // avoid leaking mdctx when throwing an exception
+    unique_ptr<EVP_MD_CTX, decltype(EVP_MD_CTX_free)> mdctx_ptr(EVP_MD_CTX_new(), EVP_MD_CTX_free);
+    #define mdctx mdctx_ptr.get()
 
     if (mdctx == NULL) {
         throw std::runtime_error("Failed to create SHA1 context");
